@@ -3,6 +3,7 @@
  */
 package ltg.phenomena;
 
+import ltg.phenomena.helioroom.Helioroom;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -43,6 +44,11 @@ public class SimulationService extends Service {
 	
 	public void sendMessage(String dest, String message) {
 		nt.sendTo(dest, message);
+	}
+	
+	
+	public void addObserver(Helioroom hr) {
+		nt.addObserver(hr);
 	}
 
 }

@@ -1,6 +1,7 @@
 package ltg.phenomena;
 
 import ltg.phenomena.SimulationService.LocalBinder;
+import ltg.phenomena.helioroom.Helioroom;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,8 +11,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 
 public class SimulationViewTab extends Activity {
-
-	protected SimulationService service;
+	
+	private Helioroom data = null;
+	private SimulationService service;
 	private boolean mBound = false;
 	
 	
@@ -21,7 +23,7 @@ public class SimulationViewTab extends Activity {
 		// Binds the service in charge of XMPP communications
 		Intent intent = new Intent(this, SimulationService.class);
 		getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-		// Setup layout
+		// Setup layout and display data
 	}
 	
 	
@@ -45,6 +47,9 @@ public class SimulationViewTab extends Activity {
 			LocalBinder binder = (LocalBinder) serv;
 			service = binder.getService();
 			mBound = true;
+			// Link to Helioroom model
+			data = new Helioroom();
+			service.addObserver(data);
 		}
 
 		@Override

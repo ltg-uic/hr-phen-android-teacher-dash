@@ -14,8 +14,6 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
-import android.util.Log;
-
 /**
  * Manages all the XMPP connections, incoming and outgoing messages. 
  * This class is a singleton meaning there is only one instance per phenomenaPod.
@@ -32,6 +30,8 @@ public class XMPPThread extends Thread {
 	private String myId = null;
 	private String password = null;
 	private String resource = null;
+	// Data
+	private XMPPThreadObserver data = null;
 	
 
 	public XMPPThread(String id, String password, String resource) {
@@ -96,8 +96,12 @@ public class XMPPThread extends Thread {
 	
 	public void listen() {
 		pc = connection.createPacketCollector(null);
-		while(!Thread.currentThread().isInterrupted())
-			Log.i("XMPPThread", pc.nextResult().toXML());
+		String currentPacket = null;
+		while(!Thread.currentThread().isInterrupted()) {
+			currentPacket = pc.nextResult().toXML();
+			if(currentPacket!=null && data!=null)
+				data.parse(currentPacket);
+		}
 	}
 
 
@@ -147,5 +151,10 @@ public class XMPPThread extends Thread {
 	
 	public boolean isConnected() {
 		return connection.isConnected() && connection.isAuthenticated();
+	}
+
+
+	public void addObserver(XMPPThreadObserver hr) {
+		this.data  = hr;
 	}
 }
