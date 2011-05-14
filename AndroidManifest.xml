@@ -21,7 +21,7 @@
         </activity>
         <activity android:name="NotificationTab"></activity>
         <activity android:name="ConfigurationTab"></activity>
-        <activity android:name="SimulationViewTab"></activity>
+        <activity android:name="SimulationTab"></activity>
         <service android:name="NotificationService"></service>
         <service android:name="SimulationService"></service>
     </application>

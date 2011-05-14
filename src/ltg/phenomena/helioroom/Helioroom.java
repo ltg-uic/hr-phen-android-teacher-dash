@@ -23,7 +23,7 @@ import android.util.Log;
  *
  * @author Gugo
  */
-public class Helioroom implements XMPPThreadObserver {
+public class Helioroom extends java.util.Observable implements XMPPThreadObserver {
 	
 	// Planets representation constants
 	public final static String IMAGES 	= "images";
@@ -41,7 +41,6 @@ public class Helioroom implements XMPPThreadObserver {
 	private long startTime = -1;
 	private List<Planet> planets = null;
 	private List<HelioroomWindow> phenWindows  = null;
-	
 
 	public Helioroom() {
 		planets = new ArrayList<Planet>();
@@ -60,11 +59,13 @@ public class Helioroom implements XMPPThreadObserver {
 				instanceId = firstBodyEl.getName();
 				configureWindows(firstBodyEl.element("windows").asXML());
 				configure(firstBodyEl.element("config").asXML());
+				this.setChanged();
+				this.notifyObservers(this);
+				Log.d("Helioroom", "Helioroom is now configured and ready to be rendered.");
 			}
 		} catch (DocumentException e) {
 			Log.e(this.getClass().getSimpleName(), "Impossible to parse helioroom");
 		}
-		Log.d("Helioroom", "Helioroom is now configured and ready to be rendered.");
 	}
 
 
@@ -104,7 +105,7 @@ public class Helioroom implements XMPPThreadObserver {
 
 	private void configureWindows(String windowsXML) {
 		// reset the windows
-		phenWindows .clear();
+		phenWindows.clear();
 		// create new windows
 		Document doc = null;
 		try {
@@ -123,11 +124,6 @@ public class Helioroom implements XMPPThreadObserver {
 		} catch (DocumentException e) {
 			Log.e(this.getClass().getSimpleName(), "Impossible to configure helioroom windows");
 		}
-	}
-	
-
-	public String getPlanetNames() {
-		return planetNames;
 	}
 	
 	
@@ -150,6 +146,9 @@ public class Helioroom implements XMPPThreadObserver {
 		return planets;
 	}
 	
+	public String getPlanetNames() {
+		return planetNames;
+	}	
 	
 	private void sortPlanets() {
 		Collections.sort(planets, new Comparator<Planet>() {
@@ -160,6 +159,5 @@ public class Helioroom implements XMPPThreadObserver {
 			
 		});
 	}
-
 
 }

@@ -32,7 +32,7 @@ public class HelioroomTeacherDashboard extends TabActivity {
 				.setContent(intent);
 		tabHost.addTab(spec);
 		// Simulation view Tab
-		intent = new Intent().setClass(this, SimulationViewTab.class);
+		intent = new Intent().setClass(this, SimulationTab.class);
 		spec = tabHost.newTabSpec("sim").setIndicator("Simulation view",
 				res.getDrawable(R.drawable.ic_tab_godview))
 				.setContent(intent);

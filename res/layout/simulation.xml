@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  	xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_width="match_parent"
+  	android:layout_height="match_parent" >
+  	
+  	<!-- Drawing canvas -->
+  	<ltg.phenomena.SimulationView 
+    	android:id="@+id/canvas" 
+    	android:layout_width="800dip" 
+    	android:layout_height="800dip"
+    	android:layout_alignParentTop="true" />
+    
+    <!-- Text view for messages -->
+	<TextView
+		android:id="@+id/text"
+		android:visibility="visible"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerInParent="true"
+		android:gravity="center_horizontal"
+		android:textColor="#88ffffff"
+		android:textSize="24sp"/>
+		
+	<!-- Pause button -->
+	<Button 
+		android:id="@+id/pauseButton" 
+		android:layout_width="wrap_content" 
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true" 
+		android:layout_height="wrap_content" 
+		android:text="@string/pauseButtonText">
+	</Button>	
+	
+	<!-- Table layout for planets -->
+	<TableLayout 
+		android:id="@+id/planetTable" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true" >
+	</TableLayout>
+	
+</RelativeLayout>
