@@ -8,7 +8,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ltg.StringUtilities;
 import ltg.phenomena.XMPPThreadObserver;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import android.util.Log;
 
 /**
@@ -43,77 +50,94 @@ public class Helioroom implements XMPPThreadObserver {
 	
 	
 	public void parse (String configXML) {
-		Log.i("Helioroom", configXML);
+		Document doc = null;
+		Element firstBodyEl = null;
 		// filter presence / message
+		try {
+			doc = DocumentHelper.parseText(StringUtilities.toJava(configXML));
+			if (doc.getRootElement().getName().equals("message")) {
+				firstBodyEl = (Element) doc.getRootElement().element("body").elements().get(0);
+				instanceId = firstBodyEl.getName();
+				configureWindows(firstBodyEl.element("windows").asXML());
+				configure(firstBodyEl.element("config").asXML());
+			}
+		} catch (DocumentException e) {
+			Log.e(this.getClass().getSimpleName(), "Impossible to parse helioroom");
+		}
+		Log.d("Helioroom", "Helioroom is now configured and ready to be rendered.");
 	}
 
 
-	public void configure(String configXML) {
+	private void configure(String configXML) {
 		// reset the phenomena state
-//		planetRepresentation = null;
-//		planetNames = null;
-//		startTime = -1;
-//		planets.clear();
-//		// load state from XML
-//		Document doc = null;
-//		try {
-//			doc = DocumentHelper.parseText(configXML);
-//			Element el = doc.getRootElement();
-//			// Phenomena properties
-//			planetRepresentation = el.elementTextTrim("planetRepresentation");
-//			planetNames = el.elementTextTrim("planetNames");
-//			startTime = Long.parseLong(el.elementTextTrim("startTime"));
-//			List<Element> plans = el.element("planets").elements();
-//			for (Element el1: plans) {
-//				planets.add(new Planet(
-//						el1.elementTextTrim("name"), 
-//						el1.elementTextTrim("color"),
-//						el1.elementTextTrim("colorName"),
-//						Integer.valueOf(el1.elementTextTrim("classOrbitalTime")),
-//						Integer.valueOf(el1.elementTextTrim("startPosition"))
-//						));
-//			}
-//			sortPlanets();
-//			this.setChanged();
-//		} catch (DocumentException e) {
-//			log.info("Impossible to configure helioroom");
-//		}
+		planetRepresentation = null;
+		planetNames = null;
+		startTime = -1;
+		planets.clear();
+		// load state from XML
+		Document doc = null;
+		try {
+			doc = DocumentHelper.parseText(configXML);
+			Element el = doc.getRootElement();
+			// Phenomena properties
+			planetRepresentation = el.elementTextTrim("planetRepresentation");
+			planetNames = el.elementTextTrim("planetNames");
+			startTime = Long.parseLong(el.elementTextTrim("startTime"));
+			@SuppressWarnings("unchecked")
+			List<Element> plans = el.element("planets").elements();
+			for (Element el1: plans) {
+				planets.add(new Planet(
+						el1.elementTextTrim("name"), 
+						el1.elementTextTrim("color"),
+						el1.elementTextTrim("colorName"),
+						Integer.valueOf(el1.elementTextTrim("classOrbitalTime")),
+						Integer.valueOf(el1.elementTextTrim("startPosition"))
+						));
+			}
+			sortPlanets();
+		} catch (DocumentException e) {
+			Log.e(this.getClass().getSimpleName(), "Impossible to configure helioroom");
+		}
 	}
 
 	
 
-	public void configureWindows(String windowsXML) {
+	private void configureWindows(String windowsXML) {
 		// reset the windows
 		phenWindows .clear();
 		// create new windows
-//		Document doc = null;
-//		try {
-//			doc = DocumentHelper.parseText(windowsXML);
-//			@SuppressWarnings("unchecked")
-//			List<Element>windows = doc.getRootElement().elements();
-//			for(Element e: windows) {
-//				if(e.attributeValue("type").equals("client")) {
-//					phenWindows.add(new HelioroomWindow(
-//							e.attributeValue("id"),
-//							Integer.valueOf(e.elementTextTrim("viewAngleBegin")),
-//							Integer.valueOf(e.elementTextTrim("viewAngleEnd"))
-//					));
-//				}
-//				if(e.attributeValue("type").equals("control")) {
-//					phenWindows.add(new HelioroomControlWindow(e.attributeValue("id")));
-//				}
-//				if(e.attributeValue("type").equals("notifier")) {
-//					phenWindows.add(new HelioroomNotifierWindow(e.attributeValue("id")));
-//				}
-//			}
-//		} catch (DocumentException e) {
-//			log.info("Impossible to configure helioroom windows");
-//		}
+		Document doc = null;
+		try {
+			doc = DocumentHelper.parseText(windowsXML);
+			@SuppressWarnings("unchecked")
+			List<Element>windows = doc.getRootElement().elements();
+			for(Element e: windows) {
+				if(e.attributeValue("type").equals("client")) {
+					phenWindows.add(new HelioroomWindow(
+							e.attributeValue("id"),
+							Integer.valueOf(e.elementTextTrim("viewAngleBegin")),
+							Integer.valueOf(e.elementTextTrim("viewAngleEnd"))
+					));
+				}
+			}
+		} catch (DocumentException e) {
+			Log.e(this.getClass().getSimpleName(), "Impossible to configure helioroom windows");
+		}
 	}
 	
 
 	public String getPlanetNames() {
 		return planetNames;
+	}
+	
+	
+	public String getInstanceId() {
+		return instanceId;
+	}
+	
+	
+	public String getPlanetRepresentation() {
+		return planetRepresentation;
 	}
 	
 	
