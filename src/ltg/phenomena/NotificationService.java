@@ -12,7 +12,7 @@ import android.os.IBinder;
  * @author tebemis
  *
  */
-public class XMPPService extends Service {
+public abstract class NotificationService extends Service {
 	
 	private final IBinder localBinder = new LocalBinder();
 	private XMPPThread nt = null;
@@ -27,24 +27,21 @@ public class XMPPService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		nt.stop(null);
+		nt.interrupt();
 	}
 
-	public IBinder onBind(Intent arg0) {
+	public IBinder onBind(Intent i) {
 		return localBinder;
 	}
 	
 	public class LocalBinder extends Binder {
-        XMPPService getService() {
-            return XMPPService.this;
+        NotificationService getService() {
+            return NotificationService.this;
         }
     }
 	
 	public void sendMessage(String dest, String message) {
 		nt.sendTo(dest, message);
 	}
-	
-	
-	
 
 }

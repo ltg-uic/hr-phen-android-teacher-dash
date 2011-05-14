@@ -6,6 +6,7 @@ package ltg.phenomena;
 
 
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
@@ -61,6 +62,8 @@ public class XMPPThread extends Thread {
 		}
 		ConnectionConfiguration config = 
 			new ConnectionConfiguration("ltg.evl.uic.edu", Integer.parseInt("5222"));
+		//config.setSASLAuthenticationEnabled(false);
+		config.setSecurityMode(SecurityMode.disabled);
 		connection = new XMPPConnection(config);
 		try {
 			// Connect
@@ -95,7 +98,6 @@ public class XMPPThread extends Thread {
 		pc = connection.createPacketCollector(null);
 		while(!Thread.currentThread().isInterrupted())
 			Log.i("XMPPThread", pc.nextResult().toXML());
-		this.disconnect();
 	}
 
 

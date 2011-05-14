@@ -1,6 +1,6 @@
 package ltg.phenomena;
 
-import ltg.phenomena.XMPPService.LocalBinder;
+import ltg.phenomena.NotificationService.LocalBinder;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.widget.Button;
 
 public class NotificationTab extends Activity {
 	
-	protected XMPPService xmppService;
+	protected NotificationService xmppService;
 	private boolean mBound = false;
 	
 	
@@ -27,7 +27,7 @@ public class NotificationTab extends Activity {
 		protected void onStart() {
 			super.onStart();
 			// Bind to LocalService
-	        Intent intent = new Intent(this, XMPPService.class);
+	        Intent intent = new Intent(this, NotificationService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        // Get UI hooks
 			final Button button = (Button) findViewById(R.id.sendButton);

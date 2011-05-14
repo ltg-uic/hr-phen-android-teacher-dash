@@ -22,6 +22,7 @@
         <activity android:name="NotificationTab"></activity>
         <activity android:name="ConfigurationTab"></activity>
         <activity android:name="SimulationViewTab"></activity>
-        <service android:name="XMPPService"></service>
+        <service android:name="NotificationService"></service>
+        <service android:name="SimulationService"></service>
     </application>
 </manifest>

@@ -1,19 +1,55 @@
 package ltg.phenomena;
 
+import ltg.phenomena.SimulationService.LocalBinder;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.webkit.WebView;
-import android.webkit.WebSettings.PluginState;
+import android.os.IBinder;
 
 public class SimulationViewTab extends Activity {
-	 public void onCreate(Bundle savedInstanceState) {
-	        super.onCreate(savedInstanceState);
-	        
-	        // Loads a web page containing Flash
-//	        WebView webview = new WebView(this);
-//	        webview.getSettings().setJavaScriptEnabled(true);
-//	        webview.getSettings().setPluginState(PluginState.ON);
-//	        setContentView(webview);
-//	        webview.loadUrl("http://ltg.evl.uic.edu/gugo/hr_may_2011/Main_vector.html#username=hr1_w1@ltg.evl.uic.edu&password=hr1_w1&pid=hr1@ltg.evl.uic.edu");
-	    }
+
+	protected SimulationService service;
+	private boolean mBound = false;
+	
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Binds the service in charge of XMPP communications
+		Intent intent = new Intent(this, SimulationService.class);
+		getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		// Setup layout
+	}
+	
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		// Unbinds the XMPP service
+		if (mBound) {
+			getApplicationContext().unbindService(mConnection);
+			mBound = false;
+		}
+	}
+	
+	
+	/** Defines callbacks for service binding, passed to bindService() */
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName className,
+				IBinder serv) {
+			LocalBinder binder = (LocalBinder) serv;
+			service = binder.getService();
+			mBound = true;
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			mBound = false;
+		}
+	};
 }
