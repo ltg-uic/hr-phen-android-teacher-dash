@@ -157,6 +157,9 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         	canvas.drawColor(Color.BLACK);
         	// Draw planets
         	Paint pa = new Paint();
+        	//Draw a white sun in the middle
+        	pa.setColor(Color.WHITE);
+        	canvas.drawCircle(mCanvasWidth/2, mCanvasHeight/2, planetRadius, pa);
         	int i = 1;
         	for (Planet p: mData.getPlanets()) {
         		p.computePosition((float)timeDelta);

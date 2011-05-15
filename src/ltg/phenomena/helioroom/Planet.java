@@ -1,5 +1,7 @@
 package ltg.phenomena.helioroom;
 
+import android.util.Log;
+
 public class Planet {
 	
 	private String name = null;
@@ -68,7 +70,12 @@ public class Planet {
 
 	public void computePosition(float timeDelta) {
 		currentPosition = new Degree(startPosition.getValue() - speed * timeDelta);
-		x = (float) Math.sin(currentPosition.getValue());
-		y = (float) Math.cos(currentPosition.getValue());
+		x = (float) Math.sin(Math.toRadians(currentPosition.getValue()));
+		y = (float) Math.cos(Math.toRadians(currentPosition.getValue()));
+	}
+
+
+	public String getCurrentPosition() {
+		return String.valueOf(currentPosition.getValue());
 	}
 }
