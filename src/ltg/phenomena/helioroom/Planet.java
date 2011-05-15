@@ -78,4 +78,10 @@ public class Planet {
 	public String getCurrentPosition() {
 		return String.valueOf(currentPosition.getValue());
 	}
+
+
+	public String getOrbitTime() {
+		String s = classOrbitalTime + "minutes";
+		return s;
+	}
 }

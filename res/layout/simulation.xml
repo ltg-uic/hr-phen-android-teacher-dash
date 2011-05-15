@@ -37,7 +37,29 @@
 		android:id="@+id/planetTable" 
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true" >
+		android:layout_below="@+id/canvas" >
+		
+		<TableRow>
+        	<TextView
+            	android:text="Planet"
+           	 	android:padding="3dip" />
+        	<TextView
+            	android:text="Color"
+            	android:padding="3dip" />
+            <TextView
+            	android:text="Name"
+           	 	android:padding="3dip" />
+            <TextView
+            	android:text="Orbital time"
+           	 	android:padding="3dip" />
+           	 <TextView
+            	android:text="Next window"
+           	 	android:padding="3dip" />
+           	 <TextView
+            	android:text="Time for next window"
+           	 	android:padding="3dip" />
+    	</TableRow>
+		
 	</TableLayout>
 	
 </RelativeLayout>
