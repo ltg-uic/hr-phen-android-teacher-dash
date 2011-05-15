@@ -3,17 +3,19 @@
  */
 package ltg.phenomena;
 
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 import ltg.phenomena.helioroom.Helioroom;
+import ltg.phenomena.helioroom.HelioroomWindow;
 import ltg.phenomena.helioroom.Planet;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.RectF;
-import android.graphics.drawable.shapes.ArcShape;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -35,7 +37,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     public static final int STATE_RUNNING = 4;
     
     
-    public static final float SPACE_BETWEEN_PLANETS = 10;
+    public static final float BTW_PL = 10;
     
     
     /** Handle to the application context, used to e.g. fetch Drawables. */
@@ -50,7 +52,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     /** Handle to the data to be rendered */
 	private Helioroom mData;
 	
-	private float planetRadius = -1;
+	private float pl_r = -1;
 	
 	
 	
@@ -66,18 +68,15 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         private int mState = STATE_SETUP;
         /** Indicate whether the surface has been created & is ready to draw */
         private boolean mRun = false;
-        /** Scratch rectangle object. */
-        private RectF mScratchRect;
         /** Handle to the surface manager object we interact with */
         private SurfaceHolder mSurfaceHolder;
         /** Time of the last frame */
-        private long timeDelta = -1;
+        private double timeDelta = -1;
 
         
         public CanvasThread(SurfaceHolder surfaceHolder, Context context) {
             mSurfaceHolder = surfaceHolder;
             mContext = context;
-            mScratchRect = new RectF(0, 0, 0, 0);
         }
 		
         
@@ -152,20 +151,35 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         
         private void doDraw(Canvas canvas) {
         	// Computes the time deltas
-        	timeDelta = System.currentTimeMillis()/1000 - mData.getStartTime();
+        	timeDelta = ((double)(System.currentTimeMillis())) / 1000 - (double) mData.getStartTime();
         	// Clean the background
         	canvas.drawColor(Color.BLACK);
-        	// Draw planets
+        	// Draw the window wedges
         	Paint pa = new Paint();
-        	//Draw a white sun in the middle
+        	pa.setAntiAlias(true);
+        	RectF bb = new RectF(0, 0, mCanvasWidth-5, mCanvasWidth-5);
+        	pa.setColor(Color.argb(255, 255, 255, 153));
+        	for (HelioroomWindow w: mData.getWindows()) {
+        		canvas.drawArc(bb, w.getViewAngleEnd(), w.getViewAngleEnd()-w.getViewAngleBegin(), true, pa);
+        	}
+        	//Draw the Sun in the middle
         	pa.setColor(Color.WHITE);
-        	canvas.drawCircle(mCanvasWidth/2, mCanvasHeight/2, planetRadius, pa);
+        	canvas.drawCircle(mCanvasWidth/2, mCanvasWidth/2, pl_r, pa);
+        	// Draw planets & orbits
         	int i = 1;
         	for (Planet p: mData.getPlanets()) {
-        		p.computePosition((float)timeDelta);
-        		pa.setColor(Color.parseColor(p.getColor().replaceAll("0x", "#")));
-        		float scale = i*(planetRadius+SPACE_BETWEEN_PLANETS);
-        		canvas.drawCircle(mCanvasWidth/2 + p.getX()*scale, mCanvasHeight/2 + p.getY()*scale, planetRadius, pa);
+        		// Planet orbits
+        		bb = new RectF(mCanvasWidth/2 - i*(2*pl_r+BTW_PL),  mCanvasWidth/2 - i*(2*pl_r+BTW_PL), mCanvasWidth/2 +i*(2*pl_r+BTW_PL), mCanvasWidth/2 + i*(2*pl_r+BTW_PL)); 
+        		pa.setColor(Color.GRAY);
+        		pa.setStyle(Style.STROKE);
+        		canvas.drawArc(bb, 0, 360, false, pa);
+        		// Planet
+        		p.computePosition(timeDelta);
+        		pa.setStyle(Style.FILL);
+        		pa.setColor(Color.parseColor(p.getColor()));
+        		float scale = i*(2*pl_r+BTW_PL);
+        		canvas.drawCircle(mCanvasWidth/2 + p.getX()*scale, mCanvasWidth/2 + p.getY()*scale, pl_r, pa);
+        		// Increase counter (drawing from the inside out)
         		i++;
         	}
         }
@@ -206,7 +220,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
 	public void update(Observable observable, Object data) {
 		mData = ((Helioroom) data);
 		float n = (float) mData.getPlanets().size();
-		planetRadius = (thread.mCanvasWidth - 2*(n+1)*SPACE_BETWEEN_PLANETS) / (2 * (2*n+1));
+		pl_r = (thread.mCanvasWidth - 2*(n+1)*BTW_PL) / (2 * (2*n+1));
 	}
 	
 

@@ -1,6 +1,6 @@
 package ltg.phenomena.helioroom;
 
-import android.util.Log;
+
 
 public class Planet {
 	
@@ -8,20 +8,20 @@ public class Planet {
 	private String color = null;
 	private String colorName = null;
 	private int classOrbitalTime = -1;
-	private float speed = -1;
+	private double speed = -1;
 	private Degree startPosition = null; 
 	private Degree currentPosition = null;
 	// Graphic data
-	private float x = 0;
-	private float y = 0;
+	private double x = 0;
+	private double y = 0;
 	
 	
 	public Planet(String name, String color, String colorName, int classOrbitalTime, int startPosition) {
 		this.name = name;
-		this.color = color;
+		this.color = color.replaceAll("0x", "#");
 		this.colorName = colorName;
 		this.classOrbitalTime = classOrbitalTime;
-		this.speed = 6 / (float) classOrbitalTime;
+		this.speed = 6 / (double) classOrbitalTime;
 		this.startPosition = new Degree(startPosition);
 		this.currentPosition = this.startPosition;
 	}
@@ -52,11 +52,11 @@ public class Planet {
 	}
 	
 	public float getX() {
-		return this.x;
+		return (float) this.x;
 	}
 
 	public float getY() {
-		return this.y;
+		return (float) this.y;
 	}
 	
 	public void setX(float x) {
@@ -68,10 +68,10 @@ public class Planet {
 	}
 
 
-	public void computePosition(float timeDelta) {
+	public void computePosition(double timeDelta) {
 		currentPosition = new Degree(startPosition.getValue() - speed * timeDelta);
-		x = (float) Math.sin(Math.toRadians(currentPosition.getValue()));
-		y = (float) Math.cos(Math.toRadians(currentPosition.getValue()));
+		x = (double) Math.cos(Math.toRadians(currentPosition.getValue()));
+		y = (double) Math.sin(Math.toRadians(currentPosition.getValue()));
 	}
 
 

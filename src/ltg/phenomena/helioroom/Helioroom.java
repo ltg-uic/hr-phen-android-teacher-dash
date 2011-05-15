@@ -146,6 +146,10 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 		return planets;
 	}
 	
+	public List<HelioroomWindow> getWindows() {
+		return phenWindows;
+	}
+	
 	public String getPlanetNames() {
 		return planetNames;
 	}	

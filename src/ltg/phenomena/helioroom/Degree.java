@@ -11,15 +11,15 @@ package ltg.phenomena.helioroom;
 public class Degree {
 	
 	// Always between 0 and 359
-	private float value = -1;
+	private double value = -1;
 	
 	
-	public Degree(float value) {
+	public Degree(double value) {
 		this.value = normalize(value);
 	}
 	
 	
-	private float normalize(float v) {
+	private double normalize(double v) {
 		// Normalize it
 		v = v % 360;
 		// Change sign if necessary
@@ -62,7 +62,7 @@ public class Degree {
 	}
 	
 	
-	public float getValue() {
+	public double getValue() {
 		return value;
 	}
 	
