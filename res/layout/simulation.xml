@@ -35,28 +35,34 @@
 	<!-- Table layout for planets -->
 	<TableLayout 
 		android:id="@+id/planetTable" 
-		android:layout_width="wrap_content" 
+		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/canvas" >
 		
 		<TableRow>
         	<TextView
             	android:text="Planet"
+            	android:textStyle="bold"
            	 	android:padding="3dip" />
         	<TextView
             	android:text="Color"
+            	android:textStyle="bold"
             	android:padding="3dip" />
             <TextView
             	android:text="Name"
+            	android:textStyle="bold"
            	 	android:padding="3dip" />
             <TextView
             	android:text="Orbital time"
+            	android:textStyle="bold"
            	 	android:padding="3dip" />
            	 <TextView
             	android:text="Next window"
+            	android:textStyle="bold"
            	 	android:padding="3dip" />
            	 <TextView
             	android:text="Time for next window"
+            	android:textStyle="bold"
            	 	android:padding="3dip" />
     	</TableRow>
 		

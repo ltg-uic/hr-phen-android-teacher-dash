@@ -2,6 +2,8 @@ package ltg.phenomena;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.ArcShape;
 import android.view.View;
@@ -14,9 +16,9 @@ public class PlanetIconView extends View {
 		public PlanetIconView(Context context) {
 			super(context);
 			icon = new ShapeDrawable(new ArcShape(0, 360));
-//			icon.setBounds(0, 0, 20, 20);
-//			icon.setIntrinsicHeight(20);
-//			icon.setIntrinsicWidth(20);
+//			icon.setBounds(0, 0, 30, 30);
+			icon.setIntrinsicHeight(30);
+			icon.setIntrinsicWidth(30);
 		}
 		
 		public ShapeDrawable getDrawable() {
@@ -26,6 +28,9 @@ public class PlanetIconView extends View {
 		
 		@Override
 		protected void onDraw(Canvas canvas) {
+			//icon.draw(canvas);
+			//Paint p = new Paint();
+			//p.setColor(Color.RED);
 			icon.draw(canvas);
 		}
 

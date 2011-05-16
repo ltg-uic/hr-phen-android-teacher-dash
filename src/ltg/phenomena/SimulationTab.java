@@ -13,13 +13,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.ArcShape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 
 public class SimulationTab extends Activity implements Observer {
@@ -61,19 +63,23 @@ public class SimulationTab extends Activity implements Observer {
 
 	private void drawTable() {
 		TableRow row = null; 
+		ShapeDrawable icon = null;
+		ImageView iv = null;
 		TextView text = null;
-		PlanetIconView icon = null;
 		for(Planet p: data.getPlanets()) {
 			row = new TableRow(this);
 			// Add planet icon
-			icon = new PlanetIconView(this);
-			icon.setColor(Color.parseColor(p.getColor()));
-			//row.addView(icon);
+			icon = new ShapeDrawable(new ArcShape(0, 360));
+			icon.getPaint().setColor(Color.parseColor(p.getColor()));
+			icon.setIntrinsicHeight(30);
+			icon.setIntrinsicWidth(30);
+			iv = new ImageView(this);
+			iv.setImageDrawable(icon);	
+			row.addView(iv);
 			// Set planet color
 			text = new TextView(this);
 			text.setTextColor(Color.WHITE);
 			text.setText(p.getColorName());
-			text.setBackgroundDrawable(icon.getDrawable());
 			row.addView(text);
 			// Set planet name
 			text = new TextView(this);
