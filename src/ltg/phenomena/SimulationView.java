@@ -13,6 +13,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -36,9 +37,6 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     public static final int STATE_RUNNING = 4;
     
     
-    public static final float BTW_PL = 10;
-    
-    
     /** Handle to the application context, used to e.g. fetch Drawables. */
     private Context mContext;
 
@@ -51,8 +49,9 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     /** Handle to the data to be rendered */
 	private Helioroom mData;
 	
-	private float pl_r = -1;
-	
+	private float n = -1;
+	private final float pl_r = 12;
+	private float orb_r = -1;
 	
 	
 	/**
@@ -156,19 +155,28 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         	// Draw the window wedges
         	Paint pa = new Paint();
         	pa.setAntiAlias(true);
-        	RectF bb = new RectF(0, 0, mCanvasWidth-5, mCanvasWidth-5);
-        	pa.setColor(Color.argb(255, 255, 255, 153));
+        	RectF bb = new RectF(mCanvasWidth/2 - (float)(2*pl_r+(n+.5)*orb_r),  mCanvasWidth/2 - (float)(2*pl_r+(n+.5)*orb_r), mCanvasWidth/2 + (float)(2*pl_r+(n+.5)*orb_r), mCanvasWidth/2 + (float)(2*pl_r+(n+.5)*orb_r));
+        	pa.setColor(Color.argb(255, 40, 40, 40));
         	for (HelioroomWindow w: mData.getWindows()) {
-        		canvas.drawArc(bb, w.getViewAngleEnd(), w.getViewAngleEnd()-w.getViewAngleBegin(), true, pa);
+        		canvas.drawArc(bb, w.getViewAngleEnd(), -(w.getViewAngleEnd()-w.getViewAngleBegin()), true, pa);
         	}
         	//Draw the Sun in the middle
         	pa.setColor(Color.WHITE);
-        	canvas.drawCircle(mCanvasWidth/2, mCanvasWidth/2, pl_r, pa);
+        	canvas.drawCircle(mCanvasWidth/2, mCanvasWidth/2, 2*pl_r, pa);
+        	// Draw window labels
+        	pa.setTextSize(20);
+        	pa.setTextAlign(Align.CENTER);
+        	for (HelioroomWindow w: mData.getWindows()) {
+        		int angle = w.getViewAngleEnd()-(w.getViewAngleEnd()-w.getViewAngleBegin())/2;
+        		float x = (float) ((2*pl_r+(n+1)*orb_r)*Math.cos(Math.toRadians(angle)));
+        		float y = (float) (5 +(2*pl_r+(n+1)*orb_r)*Math.sin(Math.toRadians(angle)));
+        		canvas.drawText(w.getName(), mCanvasWidth/2 + x, mCanvasWidth/2 + y, pa);
+        	}
         	// Draw planets & orbits
         	int i = 1;
         	for (Planet p: mData.getPlanets()) {
-        		// Planet orbits
-        		bb = new RectF(mCanvasWidth/2 - i*(2*pl_r+BTW_PL),  mCanvasWidth/2 - i*(2*pl_r+BTW_PL), mCanvasWidth/2 +i*(2*pl_r+BTW_PL), mCanvasWidth/2 + i*(2*pl_r+BTW_PL)); 
+        		// Planet orbits 
+        		bb = new RectF(mCanvasWidth/2 - (2*pl_r+i*orb_r),  mCanvasWidth/2 - (2*pl_r+i*orb_r), mCanvasWidth/2 + (2*pl_r+i*orb_r), mCanvasWidth/2 + (2*pl_r+i*orb_r));
         		pa.setColor(Color.GRAY);
         		pa.setStyle(Style.STROKE);
         		canvas.drawArc(bb, 0, 360, false, pa);
@@ -176,7 +184,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		p.computePosition(timeDelta);
         		pa.setStyle(Style.FILL);
         		pa.setColor(Color.parseColor(p.getColor()));
-        		float scale = i*(2*pl_r+BTW_PL);
+        		float scale = 2*pl_r+i*orb_r;
         		canvas.drawCircle(mCanvasWidth/2 + p.getX()*scale, mCanvasWidth/2 + p.getY()*scale, pl_r, pa);
         		// Increase counter (drawing from the inside out)
         		i++;
@@ -218,8 +226,8 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
 	@Override
 	public void update(Observable observable, Object data) {
 		mData = ((Helioroom) data);
-		float n = (float) mData.getPlanets().size();
-		pl_r = (thread.mCanvasWidth - 2*(n+1)*BTW_PL) / (2 * (2*n+1));
+		n = (float) mData.getPlanets().size();
+		orb_r = (thread.mCanvasWidth -4*pl_r) / (2*(n+1));
 	}
 	
 

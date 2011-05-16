@@ -12,7 +12,6 @@ package ltg.phenomena.helioroom;
 public class HelioroomWindow {
 	
 	private String windowName = null;
-	private Helioroom hr = null;
 	private int viewAngleBegin = -1;
 	private int viewAngleEnd = -1;
 	
@@ -31,6 +30,11 @@ public class HelioroomWindow {
 
 	public int getViewAngleEnd() {
 		return viewAngleEnd;
+	}
+
+
+	public String getName() {
+		return windowName.substring(windowName.lastIndexOf("_")+1, windowName.length()).toUpperCase();
 	}
 
 }

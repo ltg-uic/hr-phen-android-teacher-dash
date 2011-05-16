@@ -19,25 +19,26 @@ public class HelioroomTeacherDashboard extends TabActivity {
 		TabHost tabHost = getTabHost();	// The activity TabHost
 		TabHost.TabSpec spec;  			// Resusable TabSpec for each tab
 		Intent intent;  				// Reusable Intent for each tab
-		// Notifications Tab
-//		intent = new Intent().setClass(this, NotificationTab.class);
-//		spec = tabHost.newTabSpec("notifications").setIndicator("Notifications",
-//				res.getDrawable(R.drawable.ic_tab_notifications))
-//				.setContent(intent);
-//		tabHost.addTab(spec);
+		
+		// Simulation view Tab
+		intent = new Intent().setClass(this, SimulationTab.class);
+		spec = tabHost.newTabSpec("sim").setIndicator("Simulation",
+				res.getDrawable(R.drawable.ic_tab_simulation))
+				.setContent(intent);
+		tabHost.addTab(spec);
 		// Configurations Tab
 		intent = new Intent().setClass(this, ConfigurationTab.class);
 		spec = tabHost.newTabSpec("configure").setIndicator("Configure",
 				res.getDrawable(R.drawable.ic_tab_configuration))
 				.setContent(intent);
 		tabHost.addTab(spec);
-		// Simulation view Tab
-		intent = new Intent().setClass(this, SimulationTab.class);
-		spec = tabHost.newTabSpec("sim").setIndicator("Simulation view",
-				res.getDrawable(R.drawable.ic_tab_simulation))
-				.setContent(intent);
-		tabHost.addTab(spec);
+		// Notifications Tab
+//		intent = new Intent().setClass(this, NotificationTab.class);
+//		spec = tabHost.newTabSpec("notifications").setIndicator("Notifications",
+//				res.getDrawable(R.drawable.ic_tab_notifications))
+//				.setContent(intent);
+//		tabHost.addTab(spec);
 		// Set current Tab
-		tabHost.setCurrentTab(1);
+		tabHost.setCurrentTab(0);
 	}
 }
