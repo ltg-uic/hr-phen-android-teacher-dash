@@ -2,7 +2,8 @@
 <RelativeLayout
   	xmlns:android="http://schemas.android.com/apk/res/android"
  	android:layout_width="match_parent"
-  	android:layout_height="match_parent" >
+  	android:layout_height="match_parent" 
+  	android:background="#ff000000" >
   	
   	<!-- Drawing canvas -->
   	<ltg.phenomena.SimulationView 
@@ -37,33 +38,35 @@
 		android:id="@+id/planetTable" 
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
+		android:stretchColumns="*"
 		android:layout_below="@+id/canvas" >
 		
 		<TableRow>
         	<TextView
-            	android:text="Planet"
+            	android:text="PLANET"
             	android:textStyle="bold"
-           	 	android:padding="3dip" />
+            	android:gravity="center"
+            	android:textSize="18dip" />
         	<TextView
-            	android:text="Color"
+            	android:text="COLOR"
             	android:textStyle="bold"
-            	android:padding="3dip" />
+            	android:textSize="18dip" />
             <TextView
-            	android:text="Name"
+            	android:text="NAME"
             	android:textStyle="bold"
-           	 	android:padding="3dip" />
+           	 	android:textSize="18dip"/>
             <TextView
-            	android:text="Orbital time"
+            	android:text="ORBITAL TIME"
             	android:textStyle="bold"
-           	 	android:padding="3dip" />
+           	 	android:textSize="18dip"/>
            	 <TextView
-            	android:text="Next window"
+            	android:text="WILL ENTER..."
             	android:textStyle="bold"
-           	 	android:padding="3dip" />
+           	 	android:textSize="18dip"/>
            	 <TextView
-            	android:text="Time for next window"
+            	android:text="...IN..."
             	android:textStyle="bold"
-           	 	android:padding="3dip" />
+           	 	android:textSize="18dip"/>
     	</TableRow>
 		
 	</TableLayout>

@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -75,11 +76,15 @@ public class SimulationTab extends Activity implements Observer {
 			icon.setIntrinsicWidth(30);
 			iv = new ImageView(this);
 			iv.setImageDrawable(icon);	
+			iv.setPadding(0, 2, 0, 2);
 			row.addView(iv);
 			// Set planet color
 			text = new TextView(this);
 			text.setTextColor(Color.WHITE);
 			text.setText(p.getColorName());
+			text.setTextSize(15);
+			text.setPadding(0, 5, 0, -1);
+			text.setGravity(Gravity.CENTER_VERTICAL);
 			row.addView(text);
 			// Set planet name
 			text = new TextView(this);

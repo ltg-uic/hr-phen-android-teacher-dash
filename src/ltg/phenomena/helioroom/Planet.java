@@ -81,7 +81,23 @@ public class Planet {
 
 
 	public String getOrbitTime() {
-		String s = classOrbitalTime + "minutes";
+		String s = "";
+		if (classOrbitalTime/1440>=1) {
+			// More than a day
+			int days = classOrbitalTime/1440;
+			int mins = classOrbitalTime % 1440;
+			int hours = mins / 60;
+			mins = mins % 60;
+			s = days + "d " + hours + "h " + mins + "min";
+		} else if (classOrbitalTime/60>=1) {
+			// More than an hour
+			int hours = classOrbitalTime / 60;
+			int minutes = classOrbitalTime % 60;
+			s = hours + "h " + minutes + "min";
+		} else {
+			// just minutes
+			s = classOrbitalTime + "min";
+		}
 		return s;
 	}
 }
