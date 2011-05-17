@@ -181,7 +181,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		float y = (float) (5 +(2*pl_r+(n+1)*orb_r)*Math.sin(Math.toRadians(angle)));
         		canvas.drawText(w.getName(), mCanvasWidth/2 + x, mCanvasWidth/2 + y, pa);
         	}
-        	// Draw planets & orbits
+        	// Draw orbits & planets
         	int i = 1;
         	for (Planet p: mData.getPlanets()) {
         		// Planet orbits 
@@ -191,6 +191,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		canvas.drawArc(bb, 0, 360, false, pa);
         		// Planet
         		p.computePosition(timeDelta);
+        		p.findNextWindow(mData.getWindows());
         		pa.setStyle(Style.FILL);
         		pa.setColor(Color.parseColor(p.getColor()));
         		float scale = 2*pl_r+i*orb_r;
@@ -205,7 +206,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		frames++;
         	}
         	if (time >= 1000) {
-        		Log.d("HRThread", "FPS = "+frames);
+        		Log.d("SimView", "FPS = "+frames);
         		time = 0; frames = 0;
         	}
         	// Set helioroom as changed

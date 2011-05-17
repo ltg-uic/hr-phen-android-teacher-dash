@@ -1,5 +1,7 @@
 package ltg.phenomena.helioroom;
 
+import java.util.List;
+
 
 
 public class Planet {
@@ -14,6 +16,8 @@ public class Planet {
 	// Graphic data
 	private double x = 0;
 	private double y = 0;
+	private String nextWindow = null;
+	private int secToNextWin = -2;
 	
 	
 	public Planet(String name, String color, String colorName, int classOrbitalTime, int startPosition) {
@@ -49,6 +53,41 @@ public class Planet {
 	
 	public Degree getStartPosition() {
 		return startPosition;
+	}
+	
+	public String getNextWin() {
+		return nextWindow;
+	}
+	
+	public String timeToNextWin() {
+		if (secToNextWin==-1)
+			return "-";
+		String s = "";
+		if (secToNextWin/60<1) {
+			// just seconds
+			s = secToNextWin + "s";
+		} else if (secToNextWin/3600<1) {
+			// minutes and seconds
+			int min = (int) Math.floor(secToNextWin/60);
+			int secs = secToNextWin % 60;
+			s = min + "min " + secs +"s";
+		} else if (secToNextWin/86400<1) {
+			// hours, minutes and seconds
+			int hours = (int) Math.floor(secToNextWin/3600);
+			int min = secToNextWin % 3600;
+			min = (int) Math.floor(min/60);
+			int secs = secToNextWin % 60;
+			s = hours + "h " + min + "min " + secs +"s";
+		} else {
+			int days = (int) Math.floor(secToNextWin/86400);
+			int hours = secToNextWin % 86400;
+			hours = (int) Math.floor(hours/3600);
+			int min = secToNextWin % 3600;
+			min = (int) Math.floor(min/60);
+			int secs = secToNextWin % 60;
+			s = days + "d " + hours + "h " + min + "min " + secs +"s";
+		}
+		return s;
 	}
 	
 	public float getX() {
@@ -99,5 +138,33 @@ public class Planet {
 			s = classOrbitalTime + "min";
 		}
 		return s;
+	}
+
+
+	public void findNextWindow(List<HelioroomWindow> windows) {
+		for (HelioroomWindow w: windows) {
+			if (currentPosition.insideCCWArc(new Degree(w.getViewAngleBegin()), new Degree(w.getViewAngleEnd()))) {
+				// inside a window... 
+				nextWindow = "Inside " + w.getName();
+				secToNextWin = -1;
+			} 
+		}
+		// check the gaps
+		// start with first-last gap
+		if (currentPosition.insideCCWArc(new Degree(windows.get(windows.size()-1).getViewAngleEnd()), new Degree(windows.get(0).getViewAngleBegin()))) {
+			nextWindow = windows.get(0).getName();
+			Degree end = new Degree(windows.get(0).getViewAngleBegin());
+			double degreesToNextWin = currentPosition.sub(end).getValue();
+			secToNextWin =  (int) Math.round(degreesToNextWin/speed);
+		}
+		for (int i=0; i<windows.size()-1; i++) {
+			//check the others
+			if (currentPosition.insideCCWArc(new Degree(windows.get(i).getViewAngleEnd()), new Degree(windows.get(i+1).getViewAngleBegin()))) {
+				nextWindow = windows.get(i+1).getName();
+				Degree end = new Degree(windows.get(i+1).getViewAngleBegin());
+				double degreesToNextWin = currentPosition.sub(end).getValue(); 
+				secToNextWin =  (int) Math.round(degreesToNextWin/speed);
+			}
+		}
 	}
 }

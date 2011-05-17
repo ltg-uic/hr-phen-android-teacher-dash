@@ -36,7 +36,9 @@ public class SimulationTab extends Activity implements Observer {
 	private SimulationView simView;
 	private TableLayout planetsTable;
 	// Other views
-	private List<TextView> curPos = new ArrayList<TextView>();
+	//private List<TextView> curPos = new ArrayList<TextView>();
+	private List<TextView> enteringWindows = new ArrayList<TextView>();
+	private List<TextView> timeToEnteringWindows = new ArrayList<TextView>();
 
 
 	@Override
@@ -104,13 +106,23 @@ public class SimulationTab extends Activity implements Observer {
 			text.setText(p.getOrbitTime());
 			row.addView(text);
 			// Set next window to be entered
-			// TODO
+			text = new TextView(this);
+			text.setTextColor(Color.WHITE);
+			text.setText(p.getNextWin());
+			enteringWindows.add(text);
+			row.addView(text);
 			// Time remaining before entering the next window
 			text = new TextView(this);
 			text.setTextColor(Color.WHITE);
-			text.setText(p.getCurrentPosition());
-			curPos.add(text);
+			text.setText(p.timeToNextWin());
+			timeToEnteringWindows.add(text);
 			row.addView(text);
+			// Current position
+//			text = new TextView(this);
+//			text.setTextColor(Color.WHITE);
+//			text.setText(p.getCurrentPosition());
+//			curPos.add(text);
+//			row.addView(text);
 			// Notify GUI thread to draw
 			planetsTable.addView(row);
 		}
@@ -119,7 +131,9 @@ public class SimulationTab extends Activity implements Observer {
 	private void updateTable() {
 		int i=0;
 		for(Planet p: data.getPlanets()) {
-			curPos.get(i).setText(p.getCurrentPosition());
+			//curPos.get(i).setText(p.getCurrentPosition());
+			enteringWindows.get(i).setText(p.getNextWin());
+			timeToEnteringWindows.get(i).setText(p.timeToNextWin());
 			i++;
 		}
 	}

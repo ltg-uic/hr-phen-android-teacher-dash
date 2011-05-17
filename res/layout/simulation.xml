@@ -11,6 +11,14 @@
     	android:layout_width="800dip" 
     	android:layout_height="800dip"
     	android:layout_alignParentTop="true" />
+    	
+    <!-- Clock showing time with seconds. Important to synch planet positions -->
+    <DigitalClock 
+    	android:id="@+id/digitalClock"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content" 
+    	android:layout_alignParentTop="true"
+		android:layout_alignParentLeft="true" />
     
     <!-- Text view for messages -->
 	<TextView

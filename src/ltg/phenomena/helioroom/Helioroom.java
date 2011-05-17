@@ -25,6 +25,8 @@ import android.util.Log;
  */
 public class Helioroom extends java.util.Observable implements XMPPThreadObserver {
 	
+	private static final long CORRECTION_FACTOR = 0;
+	
 	// Planets representation constants
 	public final static String IMAGES 	= "images";
 	public final static String SPHERES 	= "spheres";
@@ -83,7 +85,7 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 			// Phenomena properties
 			planetRepresentation = el.elementTextTrim("planetRepresentation");
 			planetNames = el.elementTextTrim("planetNames");
-			startTime = Long.parseLong(el.elementTextTrim("startTime"));
+			startTime = Long.parseLong(el.elementTextTrim("startTime")) + CORRECTION_FACTOR;
 			@SuppressWarnings("unchecked")
 			List<Element> plans = el.element("planets").elements();
 			for (Element el1: plans) {
