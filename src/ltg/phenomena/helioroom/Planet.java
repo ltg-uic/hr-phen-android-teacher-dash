@@ -76,7 +76,7 @@ public class Planet {
 
 
 	public String getCurrentPosition() {
-		return String.valueOf(currentPosition.getValue());
+		return String.format("%.3f",currentPosition.getValue());
 	}
 
 

@@ -47,7 +47,7 @@ public class SimulationService extends Service {
 	}
 	
 	
-	public void addObserver(Helioroom hr) {
+	public void linkData(Helioroom hr) {
 		nt.addObserver(hr);
 	}
 

@@ -35,6 +35,7 @@ public class XMPPThread extends Thread {
 	
 
 	public XMPPThread(String id, String password, String resource) {
+		this.setName("XMPPThread "+id);
 		this.myId = id;
 		this.password = password;
 		this.resource = resource;

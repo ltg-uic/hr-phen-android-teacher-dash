@@ -1,5 +1,7 @@
 package ltg.phenomena;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,6 +35,8 @@ public class SimulationTab extends Activity implements Observer {
 	private CanvasThread canvasThread;
 	private SimulationView simView;
 	private TableLayout planetsTable;
+	// Other views
+	private List<TextView> curPos = new ArrayList<TextView>();
 
 
 	@Override
@@ -58,7 +62,10 @@ public class SimulationTab extends Activity implements Observer {
 	@Override
 	public void update(Observable observable, Object data) {
 		this.data = ((Helioroom) data);
-		drawTable();
+		if(planetsTable.getChildCount() == 1)
+			handler.sendEmptyMessage(0);
+		else 
+			handler.sendEmptyMessage(1);
 	}
 
 
@@ -99,11 +106,21 @@ public class SimulationTab extends Activity implements Observer {
 			// Set next window to be entered
 			// TODO
 			// Time remaining before entering the next window
-			// TODO
+			text = new TextView(this);
+			text.setTextColor(Color.WHITE);
+			text.setText(p.getCurrentPosition());
+			curPos.add(text);
+			row.addView(text);
 			// Notify GUI thread to draw
-			Message m = new Message();
-			m.obj = row;
-			handler.sendMessage(m);
+			planetsTable.addView(row);
+		}
+	}
+	
+	private void updateTable() {
+		int i=0;
+		for(Planet p: data.getPlanets()) {
+			curPos.get(i).setText(p.getCurrentPosition());
+			i++;
 		}
 	}
 	
@@ -111,7 +128,11 @@ public class SimulationTab extends Activity implements Observer {
 	 private Handler handler = new Handler() {
          @Override
          public void handleMessage(Message msg) {
-                 planetsTable.addView((TableRow)msg.obj);
+        	 if(msg.what==1) {
+        		 updateTable();
+        	 } else {
+        		 drawTable();
+        	 }
          }
  };
 
@@ -152,7 +173,7 @@ public class SimulationTab extends Activity implements Observer {
 			service = binder.getService();
 			mBound = true;
 			// Link to Helioroom model
-			service.addObserver(data);
+			service.linkData(data);
 		}
 
 		@Override

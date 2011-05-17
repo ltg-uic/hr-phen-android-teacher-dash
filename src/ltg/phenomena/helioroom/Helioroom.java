@@ -163,5 +163,11 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 			
 		});
 	}
+	
+	
+	public void markAsChanged() {
+		this.setChanged();
+		this.notifyObservers(this);
+	}
 
 }

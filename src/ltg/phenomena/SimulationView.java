@@ -68,11 +68,17 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         private boolean mRun = false;
         /** Handle to the surface manager object we interact with */
         private SurfaceHolder mSurfaceHolder;
-        /** Time of the last frame */
-        private double timeDelta = -1;
+        /** Time since the beginning of the simulation*/
+        private double timeDelta = 0;
+        /** Time since the last frame*/
+        private long lastFrame = 0;  
+        // Variable used to compute frame rate
+        private int frames = 0;
+        private long time = 0;
 
         
         public CanvasThread(SurfaceHolder surfaceHolder, Context context) {
+        	this.setName("Rendering");
             mSurfaceHolder = surfaceHolder;
             mContext = context;
         }
@@ -149,7 +155,10 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         
         private void doDraw(Canvas canvas) {
         	// Computes the time deltas
-        	timeDelta = ((double)(System.currentTimeMillis())) / 1000 - (double) mData.getStartTime();
+        	long currFrame = System.currentTimeMillis();
+        	if (lastFrame==0)
+        		lastFrame = currFrame;
+        	timeDelta = ((double)(currFrame)) / 1000 - (double) mData.getStartTime();
         	// Clean the background
         	canvas.drawColor(Color.BLACK);
         	// Draw the window wedges
@@ -189,6 +198,19 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		// Increase counter (drawing from the inside out)
         		i++;
         	}
+        	// Compute frame rate
+        	if (lastFrame!=0) {
+        		time = time + (currFrame - lastFrame);
+        		lastFrame = currFrame;
+        		frames++;
+        	}
+        	if (time >= 1000) {
+        		Log.d("HRThread", "FPS = "+frames);
+        		time = 0; frames = 0;
+        	}
+        	// Set helioroom as changed
+        	mData.markAsChanged();
+        		
         }
 		
 	}
