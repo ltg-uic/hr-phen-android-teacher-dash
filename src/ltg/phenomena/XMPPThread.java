@@ -5,6 +5,11 @@ package ltg.phenomena;
 
 
 
+import java.io.IOException;
+
+import ltg.SntpClient;
+import ltg.phenomena.helioroom.Helioroom;
+
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.PacketCollector;
@@ -31,7 +36,10 @@ public class XMPPThread extends Thread {
 	private String password = null;
 	private String resource = null;
 	// Data
-	private XMPPThreadObserver data = null;
+	private Helioroom data = null;
+	
+	// Clock offsets
+	private long ntpOffSetMS = 0;
 	
 
 	public XMPPThread(String id, String password, String resource) {
@@ -44,6 +52,12 @@ public class XMPPThread extends Thread {
 	
 	@Override
 	public void run() {
+		// get NTP time for synchronization purposes
+		try {
+			ntpOffSetMS = SntpClient.getNTPTime();
+		} catch (IOException e) {
+			ntpOffSetMS = 0;
+		}
 		connect();
 		listen();
 	}
@@ -155,7 +169,8 @@ public class XMPPThread extends Thread {
 	}
 
 
-	public void addObserver(XMPPThreadObserver hr) {
+	public void linkToData(Helioroom hr) {
 		this.data  = hr;
-	}
+		data.setNtcf(ntpOffSetMS);
+	} 
 }

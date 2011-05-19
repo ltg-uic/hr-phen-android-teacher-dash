@@ -3,9 +3,11 @@
  */
 package ltg.phenomena;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import ltg.SntpClient;
 import ltg.phenomena.helioroom.Helioroom;
 import ltg.phenomena.helioroom.HelioroomWindow;
 import ltg.phenomena.helioroom.Planet;
@@ -155,9 +157,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         
         private void doDraw(Canvas canvas) {
         	// Computes the time deltas
-        	long currFrame = System.currentTimeMillis();
-        	if (lastFrame==0)
-        		lastFrame = currFrame;
+        	long currFrame = System.currentTimeMillis() + mData.getNtcf();
         	timeDelta = ((double)(currFrame)) / 1000 - (double) mData.getStartTime();
         	// Clean the background
         	canvas.drawColor(Color.BLACK);
@@ -204,9 +204,11 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		time = time + (currFrame - lastFrame);
         		lastFrame = currFrame;
         		frames++;
+        	} else {
+        		lastFrame = currFrame;
         	}
-        	if (time >= 1000) {
-        		Log.d("SimView", "FPS = "+frames);
+        	if (time >= 5000) {
+        		Log.d("SimView", "FPS = "+frames/5);
         		time = 0; frames = 0;
         	}
         	// Set helioroom as changed

@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observable;
 
 import ltg.StringUtilities;
-import ltg.phenomena.XMPPThreadObserver;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -23,9 +23,7 @@ import android.util.Log;
  *
  * @author Gugo
  */
-public class Helioroom extends java.util.Observable implements XMPPThreadObserver {
-	
-	private static final long CORRECTION_FACTOR = 0;
+public class Helioroom extends Observable {
 	
 	// Planets representation constants
 	public final static String IMAGES 	= "images";
@@ -43,6 +41,11 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 	private long startTime = -1;
 	private List<Planet> planets = null;
 	private List<HelioroomWindow> phenWindows  = null;
+	
+	// Network Time Correction Factor
+	// Android doesn't update the time using NTP frequently enough so there is an 
+	// offset between the time returned by System.getCurrentTime() and the real time.
+	private long ntcf  = 0;
 
 	public Helioroom() {
 		planets = new ArrayList<Planet>();
@@ -85,7 +88,7 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 			// Phenomena properties
 			planetRepresentation = el.elementTextTrim("planetRepresentation");
 			planetNames = el.elementTextTrim("planetNames");
-			startTime = Long.parseLong(el.elementTextTrim("startTime")) + CORRECTION_FACTOR;
+			startTime = Long.parseLong(el.elementTextTrim("startTime")) + ntcf;
 			@SuppressWarnings("unchecked")
 			List<Element> plans = el.element("planets").elements();
 			for (Element el1: plans) {
@@ -156,6 +159,16 @@ public class Helioroom extends java.util.Observable implements XMPPThreadObserve
 		return planetNames;
 	}	
 	
+	public long getNtcf() {
+		return ntcf;
+	}
+
+
+	public void setNtcf(long ntcf) {
+		this.ntcf = ntcf;
+	}
+
+
 	private void sortPlanets() {
 		Collections.sort(planets, new Comparator<Planet>() {
 			@Override
