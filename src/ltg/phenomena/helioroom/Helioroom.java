@@ -39,21 +39,21 @@ public class Helioroom extends Observable {
 	private String planetRepresentation = null;
 	private String planetNames = null;
 	private long startTime = -1;
-	private List<Planet> planets = null;
-	private List<HelioroomWindow> phenWindows  = null;
+	private List<Planet> planets = new ArrayList<Planet>();
+	private List<HelioroomWindow> phenWindows = new ArrayList<HelioroomWindow>();
 	
 	// Network Time Correction Factor
 	// Android doesn't update the time using NTP frequently enough so there is an 
 	// offset between the time returned by System.getCurrentTime() and the real time.
 	private long ntcf  = 0;
 
+	
+	// Default empty constructor
 	public Helioroom() {
-		planets = new ArrayList<Planet>();
-		phenWindows = new ArrayList<HelioroomWindow>();
 	}
 	
 	
-	public void parse (String configXML) {
+	synchronized public void parse (String configXML) {
 		Document doc = null;
 		Element firstBodyEl = null;
 		// filter presence / message
@@ -132,43 +132,42 @@ public class Helioroom extends Observable {
 	}
 	
 	
-	public String getInstanceId() {
+	synchronized public void setNtcf(long ntcf) {
+		this.ntcf = ntcf;
+	}
+	
+	
+	synchronized public String getInstanceId() {
 		return instanceId;
 	}
 	
-	
-	public String getPlanetRepresentation() {
+	synchronized public String getPlanetRepresentation() {
 		return planetRepresentation;
 	}
 	
-	
-	public Long getStartTime() {
-		return startTime;
-	}
-
-
-	public List<Planet> getPlanets() {
-		return planets;
-	}
-	
-	public List<HelioroomWindow> getWindows() {
-		return phenWindows;
-	}
-	
-	public String getPlanetNames() {
+	synchronized public String getPlanetNames() {
 		return planetNames;
 	}	
 	
-	public long getNtcf() {
+	synchronized public Long getStartTime() {
+		return startTime;
+	}
+
+	synchronized public List<Planet> getPlanets() {
+		List<Planet> planetCopy = new ArrayList<Planet>(planets);
+		return planetCopy;
+	}
+	
+	synchronized public List<HelioroomWindow> getWindows() {
+		List<HelioroomWindow> winsCopy = new ArrayList<HelioroomWindow>(phenWindows);
+		return winsCopy;
+	}
+	
+	synchronized public long getNtcf() {
 		return ntcf;
 	}
 
-
-	public void setNtcf(long ntcf) {
-		this.ntcf = ntcf;
-	}
-
-
+		
 	private void sortPlanets() {
 		Collections.sort(planets, new Comparator<Planet>() {
 			@Override
@@ -180,7 +179,7 @@ public class Helioroom extends Observable {
 	}
 	
 	
-	public void markAsChanged() {
+	synchronized public void markAsChanged() {
 		this.setChanged();
 		this.notifyObservers(this);
 	}

@@ -1,12 +1,10 @@
 package ltg.phenomena;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import ltg.SntpClient;
 import ltg.phenomena.SimulationService.LocalBinder;
 import ltg.phenomena.SimulationView.CanvasThread;
 import ltg.phenomena.helioroom.Helioroom;
@@ -23,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -194,7 +191,7 @@ public class SimulationTab extends Activity implements Observer {
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
+		public void onServiceDisconnected(ComponentName cn) {
 			mBound = false;
 		}
 	};

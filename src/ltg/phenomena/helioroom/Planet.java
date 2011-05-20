@@ -150,20 +150,22 @@ public class Planet {
 			} 
 		}
 		// check the gaps
-		// start with first-last gap
-		if (currentPosition.insideCCWArc(new Degree(windows.get(windows.size()-1).getViewAngleEnd()), new Degree(windows.get(0).getViewAngleBegin()))) {
-			nextWindow = windows.get(0).getName();
-			Degree end = new Degree(windows.get(0).getViewAngleBegin());
-			double degreesToNextWin = currentPosition.sub(end).getValue();
-			secToNextWin =  (int) Math.round(degreesToNextWin/speed);
-		}
-		for (int i=0; i<windows.size()-1; i++) {
-			//check the others
-			if (currentPosition.insideCCWArc(new Degree(windows.get(i).getViewAngleEnd()), new Degree(windows.get(i+1).getViewAngleBegin()))) {
-				nextWindow = windows.get(i+1).getName();
-				Degree end = new Degree(windows.get(i+1).getViewAngleBegin());
-				double degreesToNextWin = currentPosition.sub(end).getValue(); 
+		if (windows.size()>1) {
+			// start with first-last gap
+			if (currentPosition.insideCCWArc(new Degree(windows.get(windows.size()-1).getViewAngleEnd()), new Degree(windows.get(0).getViewAngleBegin()))) {
+				nextWindow = windows.get(0).getName();
+				Degree end = new Degree(windows.get(0).getViewAngleBegin());
+				double degreesToNextWin = currentPosition.sub(end).getValue();
 				secToNextWin =  (int) Math.round(degreesToNextWin/speed);
+			}
+			for (int i=0; i<windows.size()-1; i++) {
+				//check the others
+				if (currentPosition.insideCCWArc(new Degree(windows.get(i).getViewAngleEnd()), new Degree(windows.get(i+1).getViewAngleBegin()))) {
+					nextWindow = windows.get(i+1).getName();
+					Degree end = new Degree(windows.get(i+1).getViewAngleBegin());
+					double degreesToNextWin = currentPosition.sub(end).getValue(); 
+					secToNextWin =  (int) Math.round(degreesToNextWin/speed);
+				}
 			}
 		}
 	}
