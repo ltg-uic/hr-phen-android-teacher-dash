@@ -23,15 +23,14 @@
 		android:textColor="#88ffffff"
 		android:textSize="24sp"/>
 		
-	<!-- Pause button -->
+	<!-- Pause button -->	
 	<Button 
-		android:id="@+id/pauseButton" 
-		android:layout_width="wrap_content" 
-		android:layout_alignParentTop="true"
-		android:layout_alignParentRight="true" 
-		android:layout_height="wrap_content" 
-		android:text="@string/pauseButtonText">
-	</Button>	
+		android:id="@+id/pauseButton"
+		android:text="@string/pauseButtonText" 
+		android:layout_width="wrap_content"  
+		android:layout_height="wrap_content"
+		android:layout_alignRight="@+id/canvas" 
+		android:layout_alignBottom="@+id/canvas" />
 	
 	<!-- Table layout for planets -->
 	<TableLayout 

@@ -14,6 +14,8 @@ import android.os.IBinder;
  *
  */
 public class SimulationService extends Service {
+	
+	private static final String PHENOMENA_ID="hr_dev";
 
 	private final IBinder localBinder = new LocalBinder();
 	private XMPPThread nt = null;
@@ -21,7 +23,7 @@ public class SimulationService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		nt = new XMPPThread("hr_dev_cp", "hr_dev_cp","textNotifier");
+		nt = new XMPPThread(PHENOMENA_ID+"_cp", PHENOMENA_ID+"_cp","textNotifier");
 		nt.start();
 	}
 
@@ -42,8 +44,8 @@ public class SimulationService extends Service {
         }
     }
 	
-	public void sendMessage(String dest, String message) {
-		nt.sendTo(dest, message);
+	public void sendMessage(String message) {
+		nt.sendTo(PHENOMENA_ID+"@ltg.evl.uic.edu", message);
 	}
 	
 	

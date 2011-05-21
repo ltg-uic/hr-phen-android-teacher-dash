@@ -60,6 +60,9 @@ public class Helioroom extends Observable {
 		try {
 			doc = DocumentHelper.parseText(StringUtilities.toJava(configXML));
 			if (doc.getRootElement().getName().equals("message")) {
+				// In case other messages (like errors) are automatically sent by the server
+				if(doc.getRootElement().attribute("type")!=null)
+					return;
 				firstBodyEl = (Element) doc.getRootElement().element("body").elements().get(0);
 				instanceId = firstBodyEl.getName();
 				configureWindows(firstBodyEl.element("windows").asXML());
