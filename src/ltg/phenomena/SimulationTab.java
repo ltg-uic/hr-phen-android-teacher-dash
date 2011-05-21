@@ -24,10 +24,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -38,6 +39,7 @@ public class SimulationTab extends Activity implements Observer {
 	
 	private static final int DIALOG_PAUSED_ID = 0;
 	private static final int DIALOG_RESUME_ID = 1;
+	private static final int DIALOG_CONFIRM_ID = 2;
 
 	private Helioroom data = new Helioroom();
 	private SimulationService service;
@@ -49,6 +51,7 @@ public class SimulationTab extends Activity implements Observer {
 	// Other views
 	private List<TextView> enteringWindows = new ArrayList<TextView>();
 	private List<TextView> timeToEnteringWindows = new ArrayList<TextView>();
+	private String movedPlanet = null;
 
 
 	@Override
@@ -61,8 +64,6 @@ public class SimulationTab extends Activity implements Observer {
 		setContentView(R.layout.simulation);
 		simView = (SimulationView) findViewById(R.id.canvas);
 		canvasThread = simView.getThread();
-		// give the SimulationView a handle to the TextView used for messages
-		simView.setTextView((TextView) findViewById(R.id.text));
 		// give the Tab and SimulationView a handle to the data to be rendered
 		data.addObserver(this);
 		data.addObserver(simView);
@@ -132,12 +133,14 @@ public class SimulationTab extends Activity implements Observer {
 			// Notify GUI thread to draw
 			planetsTable.addView(row);
 		}
+		// Enable the pause button and the planets dragging
+		pauseButton.setEnabled(true);
+		simView.setOnTouchListener(canvasListener);
 	}
 	
 	private void updateTable() {
 		int i=0;
 		for(Planet p: data.getPlanets()) {
-			//curPos.get(i).setText(p.getCurrentPosition());
 			enteringWindows.get(i).setText(p.getNextWin());
 			timeToEnteringWindows.get(i).setText(p.timeToNextWin());
 			i++;
@@ -159,12 +162,38 @@ public class SimulationTab extends Activity implements Observer {
 	
 	private OnClickListener pauseButtonListener = new OnClickListener() {
 	    public void onClick(View v) {
-	      if(pauseButton.getText().equals("Pause simulation")) {
+	      if(data.getState().equals(Helioroom.RUNNING)) {
 	    	  showDialog(DIALOG_PAUSED_ID);
 	      } else {
 	    	  showDialog(DIALOG_RESUME_ID);
 	      }
 	    }
+	};
+
+
+	private OnTouchListener canvasListener = new OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			float x = event.getX();
+			float y = event.getY();
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				simView.touch_start(x, y);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				simView.touch_move(x, y);
+				break;
+			case MotionEvent.ACTION_UP:
+				movedPlanet = null;
+				movedPlanet = simView.getGrabbedPlanet();
+				if(movedPlanet!=null) {
+					showDialog(DIALOG_CONFIRM_ID);
+				}
+				break;
+			}
+			return true;
+
+		}
 	};
 	
 
@@ -178,7 +207,11 @@ public class SimulationTab extends Activity implements Observer {
 			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
 			                pauseButton.setText("Resume simulation");
-			                service.sendMessage("pause");
+			                data.setState(Helioroom.PAUSED);
+			                canvasThread.pause();
+			                long curTime = System.currentTimeMillis() + data.getNtcf();
+			                data.setStartOfLastPauseTime(curTime);
+			                service.sendMessage("pause " + curTime);
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -194,11 +227,35 @@ public class SimulationTab extends Activity implements Observer {
 			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
 			                pauseButton.setText("Pause simulation");
+			                long curTime = System.currentTimeMillis() + data.getNtcf();
+			                long delta = (curTime - data.getStartOfLastPauseTime())/1000;
+			                data.setStartOfLastPauseTime(-1);
+			                data.setStartTime(delta);
+			                data.setState(Helioroom.RUNNING);
+			                canvasThread.unpause();
+			                service.sendMessage("unpause, delta = " + delta);
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
 			                d.cancel();
+			           }
+			       });
+			dialog = builder.create();
+			break;
+		case DIALOG_CONFIRM_ID:
+			builder.setMessage("Are you sure you want to move this planet?")
+			       .setCancelable(false)
+			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface d, int id) {
+			        	   String nsp = simView.moveGrabbedPlanet();
+			        	   simView.releaseGrabbedPlanet();
+			        	   service.sendMessage("Move " + movedPlanet + " to " + nsp);
+			           }
+			       })
+			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+			           public void onClick(DialogInterface d, int id) {
+			        	   simView.releaseGrabbedPlanet();
 			           }
 			       });
 			dialog = builder.create();

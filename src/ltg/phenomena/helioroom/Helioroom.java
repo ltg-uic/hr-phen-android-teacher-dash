@@ -33,12 +33,19 @@ public class Helioroom extends Observable {
 	public final static String NONE 	= "none";
 	public final static String NAMES 	= "names";
 	public final static String COLORS 	= "color";
+	
+	// State constants
+	public final static String RUNNING 	= "running";
+	public final static String PAUSED 	= "paused";
+	
 
 	// Simulation data
 	private String instanceId = null;
 	private String planetRepresentation = null;
 	private String planetNames = null;
 	private long startTime = -1;
+	private String state = RUNNING;
+	private long startOfLastPauseTime = -1;
 	private List<Planet> planets = new ArrayList<Planet>();
 	private List<HelioroomWindow> phenWindows = new ArrayList<HelioroomWindow>();
 	
@@ -135,11 +142,6 @@ public class Helioroom extends Observable {
 	}
 	
 	
-	synchronized public void setNtcf(long ntcf) {
-		this.ntcf = ntcf;
-	}
-	
-	
 	synchronized public String getInstanceId() {
 		return instanceId;
 	}
@@ -152,8 +154,29 @@ public class Helioroom extends Observable {
 		return planetNames;
 	}	
 	
-	synchronized public Long getStartTime() {
+	synchronized public long getStartTime() {
 		return startTime;
+	}
+	
+	
+	synchronized public void setStartTime(long delta) {
+		startTime += delta;
+	}
+	
+	synchronized public long getStartOfLastPauseTime() {
+		return startOfLastPauseTime;
+	}
+	
+	synchronized public void setStartOfLastPauseTime(long setStartOfLastPauseTime) {
+		this.startOfLastPauseTime = setStartOfLastPauseTime;
+	}
+	
+	synchronized public String getState() {
+		return state;
+	}
+	
+	synchronized public void setState(String state) {
+		this.state = state;
 	}
 
 	synchronized public List<Planet> getPlanets() {
@@ -168,6 +191,10 @@ public class Helioroom extends Observable {
 	
 	synchronized public long getNtcf() {
 		return ntcf;
+	}
+	
+	synchronized public void setNtcf(long ntcf) {
+		this.ntcf = ntcf;
 	}
 
 		

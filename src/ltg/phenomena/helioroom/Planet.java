@@ -55,6 +55,10 @@ public class Planet {
 		return startPosition;
 	}
 	
+	public void setStartPosition(Degree startPosition) {
+		this.startPosition = startPosition;
+	}
+	
 	public String getNextWin() {
 		return nextWindow;
 	}
@@ -112,12 +116,21 @@ public class Planet {
 		x = (double) Math.cos(Math.toRadians(currentPosition.getValue()));
 		y = (double) Math.sin(Math.toRadians(currentPosition.getValue()));
 	}
-
+	
+	public void findDragPosition(float x, float y) {
+		currentPosition = new Degree(Math.toDegrees(Math.atan2(y, x)));
+		this.x = (double) Math.cos(Math.toRadians(currentPosition.getValue()));
+		this.y = (double) Math.sin(Math.toRadians(currentPosition.getValue()));	
+	}
 
 	public String getCurrentPosition() {
 		return String.format("%.3f",currentPosition.getValue());
 	}
 
+	
+	public Degree getCurrentPositionDegree() {
+		return currentPosition;
+	}
 
 	public String getOrbitTime() {
 		String s = "";
