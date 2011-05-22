@@ -26,12 +26,16 @@
 	<!-- Pause button -->	
 	<Button 
 		android:id="@+id/pauseButton"
-		android:text="@string/pauseButtonText" 
+		android:text="@string/pauseButtonTextRunning" 
 		android:layout_width="wrap_content"  
 		android:layout_height="wrap_content"
 		android:enabled="false"
+		android:visibility="invisible"
 		android:layout_alignRight="@+id/canvas" 
-		android:layout_alignBottom="@+id/canvas" />
+		android:layout_alignBottom="@+id/canvas" 
+		android:layout_marginBottom = "20dip"
+		android:layout_marginRight = "20dip"
+		/>
 	
 	<!-- Table layout for planets -->
 	<TableLayout 
@@ -41,6 +45,9 @@
 		android:stretchColumns="*"
 		android:layout_below="@+id/canvas" >
 		
+		 <View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
 		<TableRow>
         	<TextView
             	android:text="PLANET"
@@ -68,6 +75,11 @@
             	android:textStyle="bold"
            	 	android:textSize="18dip"/>
     	</TableRow>
+    	
+    	<View
+        android:layout_height="2dip"
+        android:layout_marginBottom="10dip"
+        android:background="#FF909090" />
 		
 	</TableLayout>
 	

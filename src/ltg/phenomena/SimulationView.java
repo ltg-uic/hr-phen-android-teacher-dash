@@ -101,8 +101,18 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		}
         		// Waits for the data to be ready
         		if (mState==STATE_SETUP)
-        			if (mData != null && mData.getInstanceId()!= null)
-        				setState(STATE_RUNNING);
+        			if (mData != null && mData.getInstanceId()!= null) {
+        				// Once data is received decide if the simulation is paused or not
+        				if (mData.getState().equals(Helioroom.RUNNING))
+        					// simutation is not paused so we just regularly start the rendering
+        					setState(STATE_RUNNING);
+        				else {
+        					// simulation is paused so we refresh the screen and 
+        					// put the thread in pause 
+        					refreshCanvas();
+        					pause();
+        				}
+        			}
         	}
         	doStop();
         }
@@ -181,17 +191,17 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         		i++;
         	}
         	// Compute frame rate
-        	if (lastFrame!=0) {
-        		time = time + (currFrame - lastFrame);
-        		lastFrame = currFrame;
-        		frames++;
-        	} else {
-        		lastFrame = currFrame;
-        	}
-        	if (time >= 5000) {
-        		Log.d("SimView", "FPS = "+frames/5);
-        		time = 0; frames = 0;
-        	}
+//        	if (lastFrame!=0) {
+//        		time = time + (currFrame - lastFrame);
+//        		lastFrame = currFrame;
+//        		frames++;
+//        	} else {
+//        		lastFrame = currFrame;
+//        	}
+//        	if (time >= 5000) {
+//        		Log.d("SimView", "FPS = "+frames/5);
+//        		time = 0; frames = 0;
+//        	}
         	// Set helioroom as changed
         	mData.markAsChanged();
         		
@@ -262,6 +272,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     				c = mSurfaceHolder.lockCanvas(null);
     				synchronized (mSurfaceHolder) {
     					currFrame = mData.getStartOfLastPauseTime();
+    					timeDelta = ((double)(currFrame)) / 1000 - (double) mData.getStartTime();
     					doDraw(c);
     				}
     			} finally {

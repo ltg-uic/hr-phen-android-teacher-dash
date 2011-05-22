@@ -2,6 +2,8 @@
 <resources>
     <string name="hello">Hello World!</string>
     <string name="app_name">HelioRoom</string>
-    <string name="pauseButtonText">Pause simulation</string>
+    <string name="pauseButtonTextRunning">Pause simulation</string>
+    <string name="pauseButtonTextPaused">Resume simulation</string>
     <string name="bgColor">#ff000000</string>
+    <string name="bgColor2">#ff282828</string>
 </resources>

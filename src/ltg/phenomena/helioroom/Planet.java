@@ -20,7 +20,7 @@ public class Planet {
 	private int secToNextWin = -2;
 	
 	
-	public Planet(String name, String color, String colorName, int classOrbitalTime, int startPosition) {
+	public Planet(String name, String color, String colorName, int classOrbitalTime, double startPosition) {
 		this.name = name;
 		this.color = color.replaceAll("0x", "#");
 		this.colorName = colorName;

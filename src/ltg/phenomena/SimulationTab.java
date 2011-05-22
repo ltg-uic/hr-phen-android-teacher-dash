@@ -77,7 +77,7 @@ public class SimulationTab extends Activity implements Observer {
 	@Override
 	public void update(Observable observable, Object data) {
 		this.data = ((Helioroom) data);
-		if(planetsTable.getChildCount() == 1)
+		if(planetsTable.getChildCount() == 3)
 			handler.sendEmptyMessage(0);
 		else 
 			handler.sendEmptyMessage(1);
@@ -89,6 +89,7 @@ public class SimulationTab extends Activity implements Observer {
 		ShapeDrawable icon = null;
 		ImageView iv = null;
 		TextView text = null;
+		int i = 0;
 		for(Planet p: data.getPlanets()) {
 			row = new TableRow(this);
 			// Add planet icon
@@ -97,7 +98,7 @@ public class SimulationTab extends Activity implements Observer {
 			icon.setIntrinsicHeight(30);
 			icon.setIntrinsicWidth(30);
 			iv = new ImageView(this);
-			iv.setImageDrawable(icon);	
+			iv.setImageDrawable(icon);
 			iv.setPadding(0, 2, 0, 2);
 			row.addView(iv);
 			// Set planet color
@@ -130,14 +131,30 @@ public class SimulationTab extends Activity implements Observer {
 			text.setText(p.timeToNextWin());
 			timeToEnteringWindows.add(text);
 			row.addView(text);
-			// Notify GUI thread to draw
+			// Draw the row
+			row.setBackgroundColor(getColor(i));
 			planetsTable.addView(row);
+			i++;
 		}
 		// Enable the pause button and the planets dragging
+		if (data.getState().equals(Helioroom.PAUSED)) {
+			pauseButton.setText(R.string.pauseButtonTextPaused);
+		} else {
+			pauseButton.setText(R.string.pauseButtonTextRunning);
+		}
 		pauseButton.setEnabled(true);
+		pauseButton.setVisibility(View.VISIBLE);
 		simView.setOnTouchListener(canvasListener);
 	}
 	
+	private int getColor(int i) {
+		if(i%2==0)
+			return Color.argb(255, 40, 40, 40);
+		else
+			return Color.BLACK;
+	}
+
+
 	private void updateTable() {
 		int i=0;
 		for(Planet p: data.getPlanets()) {
@@ -206,12 +223,12 @@ public class SimulationTab extends Activity implements Observer {
 			       .setCancelable(false)
 			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
-			                pauseButton.setText("Resume simulation");
+			                pauseButton.setText(R.string.pauseButtonTextPaused);
 			                data.setState(Helioroom.PAUSED);
 			                canvasThread.pause();
 			                long curTime = System.currentTimeMillis() + data.getNtcf();
 			                data.setStartOfLastPauseTime(curTime);
-			                service.sendMessage("pause " + curTime);
+			                service.sendMessage("<editState ts=\""+curTime+"\">pause</editState>");
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -226,14 +243,14 @@ public class SimulationTab extends Activity implements Observer {
 			       .setCancelable(false)
 			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
-			                pauseButton.setText("Pause simulation");
+			                pauseButton.setText(R.string.pauseButtonTextRunning);
 			                long curTime = System.currentTimeMillis() + data.getNtcf();
 			                long delta = (curTime - data.getStartOfLastPauseTime())/1000;
 			                data.setStartOfLastPauseTime(-1);
 			                data.setStartTime(delta);
 			                data.setState(Helioroom.RUNNING);
-			                canvasThread.unpause();
-			                service.sendMessage("unpause, delta = " + delta);
+			                canvasThread.unpause(); 
+			                service.sendMessage("<editState newStartTime=\"" +data.getStartTime() + "\">resume</editState>");
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -250,7 +267,9 @@ public class SimulationTab extends Activity implements Observer {
 			           public void onClick(DialogInterface d, int id) {
 			        	   String nsp = simView.moveGrabbedPlanet();
 			        	   simView.releaseGrabbedPlanet();
-			        	   service.sendMessage("Move " + movedPlanet + " to " + nsp);
+			        	   String message = "<editPlanet name=\"" + movedPlanet + "\">" +
+			        	   		"<startPosition>" + nsp + "</startPosition></editPlanet>";
+			        	   service.sendMessage(message);
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {

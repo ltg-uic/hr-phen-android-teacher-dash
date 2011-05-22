@@ -98,7 +98,9 @@ public class Helioroom extends Observable {
 			// Phenomena properties
 			planetRepresentation = el.elementTextTrim("planetRepresentation");
 			planetNames = el.elementTextTrim("planetNames");
+			state = el.elementTextTrim("state");
 			startTime = Long.parseLong(el.elementTextTrim("startTime")) + ntcf;
+			startOfLastPauseTime = Long.parseLong(el.elementTextTrim("startOfLastPauseTime"));
 			@SuppressWarnings("unchecked")
 			List<Element> plans = el.element("planets").elements();
 			for (Element el1: plans) {
@@ -107,7 +109,7 @@ public class Helioroom extends Observable {
 						el1.elementTextTrim("color"),
 						el1.elementTextTrim("colorName"),
 						Integer.valueOf(el1.elementTextTrim("classOrbitalTime")),
-						Integer.valueOf(el1.elementTextTrim("startPosition"))
+						Double.valueOf(el1.elementTextTrim("startPosition"))
 						));
 			}
 			sortPlanets();

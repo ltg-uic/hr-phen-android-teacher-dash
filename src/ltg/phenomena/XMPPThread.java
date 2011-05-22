@@ -27,7 +27,7 @@ import org.jivesoftware.smack.packet.Message;
  */
 public class XMPPThread extends Thread {
 	// Connection
-	protected XMPPConnection connection = null;
+	private XMPPConnection connection = null;
 	private Roster roster = null;
 	// Packet collector
 	private PacketCollector pc = null;
@@ -83,7 +83,10 @@ public class XMPPThread extends Thread {
 		try {
 			// Connect
 			connection.connect();
-			connection.login(myId, password, resource);
+			if (connection.isConnected())
+				connection.login(myId, password, resource);
+			else
+				throw new XMPPException();
 		} catch (XMPPException e) {
 			System.err.println("Impossible to connect to the XMPP server.");
 			connection = null;
