@@ -73,7 +73,8 @@
            	 <TextView
             	android:text="...IN..."
             	android:textStyle="bold"
-           	 	android:textSize="18dip"/>
+           	 	android:textSize="18dip"
+           	 	android:paddingRight="40dip"/>
     	</TableRow>
     	
     	<View

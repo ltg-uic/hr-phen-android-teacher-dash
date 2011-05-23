@@ -44,7 +44,7 @@ public class Helioroom extends Observable {
 	private String planetRepresentation = null;
 	private String planetNames = null;
 	private long startTime = -1;
-	private String state = RUNNING;
+	private String state = null;
 	private long startOfLastPauseTime = -1;
 	private List<Planet> planets = new ArrayList<Planet>();
 	private List<HelioroomWindow> phenWindows = new ArrayList<HelioroomWindow>();

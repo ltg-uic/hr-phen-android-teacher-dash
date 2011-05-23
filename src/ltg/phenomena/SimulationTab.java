@@ -84,6 +84,21 @@ public class SimulationTab extends Activity implements Observer {
 	}
 
 
+
+	// GUI Handler
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if(msg.what!=1) {
+				drawTable();
+				enableGUI();
+			} else {
+				updateTable();
+			}
+		}
+	};
+	
+	
 	private void drawTable() {
 		TableRow row = null; 
 		ShapeDrawable icon = null;
@@ -136,7 +151,22 @@ public class SimulationTab extends Activity implements Observer {
 			planetsTable.addView(row);
 			i++;
 		}
-		// Enable the pause button and the planets dragging
+	}
+
+
+	private void updateTable() {
+		int i=0;
+		if (data.getState().equals(Helioroom.RUNNING))
+			for(Planet p: data.getPlanets()) {
+				enteringWindows.get(i).setText(p.getNextWin());
+				timeToEnteringWindows.get(i).setText(p.timeToNextWin());
+				i++;
+			}
+	}
+	
+	
+	private void enableGUI() {
+		// Set the right text for the pause button and enables it
 		if (data.getState().equals(Helioroom.PAUSED)) {
 			pauseButton.setText(R.string.pauseButtonTextPaused);
 		} else {
@@ -144,8 +174,10 @@ public class SimulationTab extends Activity implements Observer {
 		}
 		pauseButton.setEnabled(true);
 		pauseButton.setVisibility(View.VISIBLE);
+		// enables planet dragging
 		simView.setOnTouchListener(canvasListener);
 	}
+	
 	
 	private int getColor(int i) {
 		if(i%2==0)
@@ -153,29 +185,11 @@ public class SimulationTab extends Activity implements Observer {
 		else
 			return Color.BLACK;
 	}
-
-
-	private void updateTable() {
-		int i=0;
-		for(Planet p: data.getPlanets()) {
-			enteringWindows.get(i).setText(p.getNextWin());
-			timeToEnteringWindows.get(i).setText(p.timeToNextWin());
-			i++;
-		}
-	}
 	
 	
-	private Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if(msg.what==1) {
-				updateTable();
-			} else {
-				drawTable();
-			}
-		}
-	};
-	
+	////////////////////////////////////////////////////////////////////
+	// GUI listeners (pause button, touch events, dialog boxes) 
+	////////////////////////////////////////////////////////////////////
 	
 	private OnClickListener pauseButtonListener = new OnClickListener() {
 	    public void onClick(View v) {
@@ -224,11 +238,9 @@ public class SimulationTab extends Activity implements Observer {
 			       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface d, int id) {
 			                pauseButton.setText(R.string.pauseButtonTextPaused);
-			                data.setState(Helioroom.PAUSED);
-			                canvasThread.pause();
 			                long curTime = System.currentTimeMillis() + data.getNtcf();
-			                data.setStartOfLastPauseTime(curTime);
 			                service.sendMessage("<editState ts=\""+curTime+"\">pause</editState>");
+			                canvasThread.pause();
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -245,12 +257,8 @@ public class SimulationTab extends Activity implements Observer {
 			           public void onClick(DialogInterface d, int id) {
 			                pauseButton.setText(R.string.pauseButtonTextRunning);
 			                long curTime = System.currentTimeMillis() + data.getNtcf();
-			                long delta = (curTime - data.getStartOfLastPauseTime())/1000;
-			                data.setStartOfLastPauseTime(-1);
-			                data.setStartTime(delta);
-			                data.setState(Helioroom.RUNNING);
-			                canvasThread.unpause(); 
-			                service.sendMessage("<editState newStartTime=\"" +data.getStartTime() + "\">resume</editState>");
+			                service.sendMessage("<editState ts=\"" +curTime + "\">resume</editState>");
+			                canvasThread.unpause();
 			           }
 			       })
 			       .setNegativeButton("No", new DialogInterface.OnClickListener() {

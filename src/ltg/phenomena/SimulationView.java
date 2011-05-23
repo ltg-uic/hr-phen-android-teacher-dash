@@ -57,7 +57,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
 	class CanvasThread extends Thread {
 	
         private int mCanvasWidth = 1;
-        /** The state of the game. One of SETUP, RUNNING, or PAUSE*/
+        /** The state of the simulation. One of SETUP, RUNNING, or PAUSE*/
         private int mState = STATE_SETUP;
         /** Indicate whether the surface has been created & is ready to draw */
         private boolean mRun = false;
@@ -66,11 +66,11 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         /** Time since the beginning of the simulation*/
         private double timeDelta = 0;
         /** Time since the last frame*/
-        private long lastFrame = 0;  
+        //private long lastFrame = 0;  
         private long currFrame = 0;
         // Variable used to compute frame rate
-        private int frames = 0;
-        private long time = 0;
+        //private int frames = 0;
+        //private long time = 0;
 
         
         public CanvasThread(SurfaceHolder surfaceHolder, Context context) {
@@ -125,8 +125,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
 
 		public void pause() {
 			synchronized (mSurfaceHolder) {
-                if (mState == STATE_RUNNING) 
-                	setState(STATE_PAUSE);
+				setState(STATE_PAUSE);
             }
 		}
 		
@@ -167,6 +166,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         	drawBackground(canvas);
         	// Draw orbits & planets
         	Paint pa = new Paint();
+        	pa.setAntiAlias(true);
         	RectF bb = null;
         	int i = 1;
         	for (Planet p: mData.getPlanets()) {
@@ -246,6 +246,7 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
     				drawBackground(canvas);
     				// Draw orbit
     	    		Paint pa = new Paint();
+    	    		pa.setAntiAlias(true);
     	    		RectF bb = new RectF(mCanvasWidth/2 - (2*pl_r+(grabbedPlanet+1)*orb_r),  mCanvasWidth/2 - (2*pl_r+(grabbedPlanet+1)*orb_r), mCanvasWidth/2 + (2*pl_r+(grabbedPlanet+1)*orb_r), mCanvasWidth/2 + (2*pl_r+(grabbedPlanet+1)*orb_r));
             		pa.setColor(Color.GRAY);
             		pa.setStyle(Style.STROKE);

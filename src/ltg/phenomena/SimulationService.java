@@ -15,7 +15,7 @@ import android.os.IBinder;
  */
 public class SimulationService extends Service {
 	
-	private static final String PHENOMENA_ID="hr_dev";
+	private static final String PHENOMENA_ID="hr1";
 
 	private final IBinder localBinder = new LocalBinder();
 	private XMPPThread nt = null;
