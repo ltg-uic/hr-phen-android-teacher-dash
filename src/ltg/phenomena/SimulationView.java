@@ -3,6 +3,7 @@
  */
 package ltg.phenomena;
 
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -218,8 +219,11 @@ public class SimulationView extends SurfaceView implements Observer, SurfaceHold
         	for (HelioroomWindow w: mData.getWindows()) {
         		canvas.drawArc(bb, w.getViewAngleEnd(), -(w.getViewAngleEnd()-w.getViewAngleBegin()), true, pa);
         	}
-        	//Draw the Sun in the middle
+        	// Draw clock
+        	pa.setTextSize(14);
         	pa.setColor(Color.WHITE);
+        	canvas.drawText(new Date(currFrame).toLocaleString(), 5, 20, pa);
+        	//Draw the Sun in the middle
         	canvas.drawCircle(mCanvasWidth/2, mCanvasWidth/2, 2*pl_r, pa);
         	// Draw window labels
         	pa.setTextSize(20);
